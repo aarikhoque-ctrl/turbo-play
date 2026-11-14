@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Play · Turbo Play</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Chakra+Petch:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="index.html" aria-label="Turbo Play home">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="11" fill="#ff8a2a"/><path d="M15 11 L30 20 L15 29 Z" fill="#2a0f10"/><path d="M5 15h7M3 20h8M5 25h7" stroke="#2a0f10" stroke-width="3" stroke-linecap="round"/></svg>
+      <span>TURBO<b>PLAY</b></span>
+    </a>
+    <nav><a href="index.html">Games</a><a href="privacy.html">Privacy</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="player">
+    <div class="stage" id="stage"><iframe id="frame" title="Game" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe></div>
+    <p class="hint">Turn your phone sideways for a bigger game.</p>
+    <div class="toolbar">
+      <h1 id="title">Loading…</h1>
+      <div class="actions">
+        <button class="btn small" id="fsBtn" type="button">⛶ Full screen</button>
+        <a class="btn ghost small" href="index.html">All games</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="details">
+    <div>
+      <h2>About this game</h2>
+      <p id="about"></p>
+      <h2>How to play</h2>
+      <ul class="keys" id="keys"></ul>
+    </div>
+    <div class="ad ad-box" data-ad-slot="game-side"><small>Advertisement</small><span>Ad space</span></div>
+  </section>
+
+  <section aria-labelledby="moreTitle">
+    <div class="sec-head"><h2 id="moreTitle">More games</h2></div>
+    <div class="grid" id="more"></div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Turbo Play</span><span><a href="privacy.html">Privacy policy</a></span></div></footer>
+
+<script src="games.js"></script>
+<script>
+(function(){
+  var games = window.TURBO_GAMES || [];
+  function load(){
+    var id = location.hash.replace('#',''), g = games.filter(function(x){return x.id===id;})[0] || games[games.length-1];
+    if (!g) { document.getElementById('title').textContent = 'No games yet'; return; }
+    document.title = g.title + ' · Turbo Play';
+    document.getElementById('title').textContent = g.title;
+    document.getElementById('about').textContent = g.about || g.blurb;
+    document.getElementById('keys').innerHTML = (g.keys||[]).map(function(k){return '<li><kbd>'+k[0]+'</kbd>'+k[1]+'</li>';}).join('');
+    var f = document.getElementById('frame');
+    if (f.getAttribute('src') !== g.url) { f.src = g.url; f.title = g.title; }
+    var others = games.filter(function(x){return x.id!==g.id;}).reverse();
+    document.getElementById('more').innerHTML = others.map(TP.card).join('') + TP.soon();
+    window.scrollTo(0,0);
+  }
+  load(); window.addEventListener('hashchange', load);
+  // keep keyboard input going to the game
+  var f = document.getElementById('frame');
+  f.addEventListener('load', function(){ try{ f.contentWindow.focus(); }catch(e){} });
+  window.addEventListener('keydown', function(e){
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].indexOf(e.key) > -1 && document.activeElement !== f) { e.preventDefault(); try{ f.contentWindow.focus(); }catch(err){} }
+  });
+  document.getElementById('fsBtn').onclick = function(){
+    var s = document.getElementById('stage'), req = s.requestFullscreen || s.webkitRequestFullscreen;
+    if (req) { try { var p = req.call(s); if (p && p.catch) p.catch(function(){}); } catch(e){} }
+    try{ f.contentWindow.focus(); }catch(e){}
+  };
+})();
+</script>
+</body>
+</html>

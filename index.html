@@ -1,0 +1,67 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Turbo Play (Copy)</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Free browser games. Play racing and arcade games instantly, no download needed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Chakra+Petch:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="index.html" aria-label="Turbo Play home">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="11" fill="#ff8a2a"/><path d="M15 11 L30 20 L15 29 Z" fill="#2a0f10"/><path d="M5 15h7M3 20h8M5 25h7" stroke="#2a0f10" stroke-width="3" stroke-linecap="round"/></svg>
+      <span>TURBO<b>PLAY</b></span>
+    </a>
+    <nav><a href="index.html" aria-current="page">Games</a><a href="privacy.html">Privacy</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" id="hero">
+    <a class="hero-art" href="play.html#lane-rush"><img src="games/lane-rush/thumb.jpg" alt="Lane Rush race cars on a highway at sunset" width="1280" height="720"><span class="playbadge"><i>▶</i>Play free</span></a>
+    <div class="hero-copy">
+      <span class="eyebrow">Featured game</span>
+      <h1>Lane Rush</h1>
+      <p>Race five rivals down a six-lane highway. Dodge wrong-way traffic and angry bullies, grab coins, and buy faster cars and cooler drivers.</p>
+      <ul class="facts"><li>Racing</li><li>3D</li><li>Keyboard or touch</li><li>Free</li></ul>
+      <a class="btn" href="play.html#lane-rush">▶ Play now</a>
+    </div>
+  </section>
+
+  <div class="ad ad-banner" data-ad-slot="home-banner"><small>Advertisement</small><span>Ad space</span></div>
+
+  <section id="games" aria-labelledby="gamesTitle">
+    <div class="sec-head">
+      <h2 id="gamesTitle">All games</h2>
+      <div class="chips" id="chips" role="group" aria-label="Filter by type"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Turbo Play</span><span><a href="privacy.html">Privacy policy</a></span></div></footer>
+
+<script src="games.js"></script>
+<script>
+(function(){
+  var games = window.TURBO_GAMES || [];
+  var feat = games.filter(function(g){return g.featured;}).slice(-1)[0] || games[games.length-1];
+  if (feat) {
+    var h = document.getElementById('hero');
+    h.querySelectorAll('a[href^="play.html"]').forEach(function(a){a.href='play.html#'+feat.id;});
+    h.querySelector('img').src = feat.thumb; h.querySelector('img').alt = feat.title + ' screenshot';
+    h.querySelector('h1').textContent = feat.title; h.querySelector('p').textContent = feat.blurb;
+  }
+  var tags = ['All'].concat(games.map(function(g){return g.tag;}).filter(function(t,i,a){return a.indexOf(t)===i;}));
+  var cur = 'All', chips = document.getElementById('chips'), grid = document.getElementById('grid');
+  function draw(){
+    chips.innerHTML = tags.map(function(t){return '<button class="chip" aria-pressed="'+(t===cur)+'">'+t+'</button>';}).join('');
+    chips.querySelectorAll('.chip').forEach(function(b){b.onclick=function(){cur=b.textContent;draw();};});
+    var list = games.slice().reverse().filter(function(g){return cur==='All'||g.tag===cur;});
+    grid.innerHTML = list.map(TP.card).join('') + TP.soon();
+  }
+  draw();
+})();
+</script>
+
+</body></html>
