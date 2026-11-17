@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Play · Turbo Play</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Chakra+Petch:wght@400;600;700&display=swap">
@@ -21,7 +23,7 @@
 
 <main class="wrap">
   <section class="player">
-    <div class="stage" id="stage"><iframe id="frame" title="Game" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe></div>
+    <div class="stage" id="stage"><iframe id="frame" title="Game" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe><button class="fsExit" id="fsExit" type="button" aria-label="Exit full screen">✕ Exit</button></div>
     <p class="hint">Turn your phone sideways for a bigger game.</p>
     <div class="toolbar">
       <h1 id="title">Loading…</h1>
@@ -74,11 +76,22 @@
   window.addEventListener('keydown', function(e){
     if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].indexOf(e.key) > -1 && document.activeElement !== f) { e.preventDefault(); try{ f.contentWindow.focus(); }catch(err){} }
   });
+  // Full screen: real fullscreen where supported, a full-window fallback for iPhones
+  var stage = document.getElementById('stage');
+  function setFake(on){
+    stage.classList.toggle('fakefs', on);
+    document.body.classList.toggle('nofs', on);
+    window.scrollTo(0,0);
+    try{ f.contentWindow.focus(); }catch(e){}
+  }
   document.getElementById('fsBtn').onclick = function(){
-    var s = document.getElementById('stage'), req = s.requestFullscreen || s.webkitRequestFullscreen;
-    if (req) { try { var p = req.call(s); if (p && p.catch) p.catch(function(){}); } catch(e){} }
+    var req = stage.requestFullscreen || stage.webkitRequestFullscreen, tried = false;
+    if (req) { try { var p = req.call(stage); tried = true; if (p && p.catch) p.catch(function(){ setFake(true); }); } catch(e){ tried = false; } }
+    if (!tried) setFake(true);
     try{ f.contentWindow.focus(); }catch(e){}
   };
+  document.getElementById('fsExit').onclick = function(){ setFake(false); };
+  window.addEventListener('keydown', function(e){ if (e.key === 'Escape') setFake(false); });
 })();
 </script>
 </body>
